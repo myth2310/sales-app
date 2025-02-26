@@ -17,9 +17,6 @@
                             <tr>
                                 <th class="border-bottom-0">Id</th>
                                 <th class="border-bottom-0">Nama Pelanggan</th>
-                                <th class="border-bottom-0">Barang Pembelian</th>
-                                <th class="border-bottom-0">Tanggal</th>
-                                <th class="border-bottom-0">Struk</th>
                                 <th class="border-bottom-0">Alamat</th>
                                 <th class="border-bottom-0">Email</th>
                                 <th class="border-bottom-0">Nomer Telepon</th>
@@ -32,19 +29,10 @@
                                     <h6 class="fw-semibold mb-1">Joshi</h6>
                                 </td>
                                 <td class="border-bottom-0">
-                                    <p class="mb-0 fw-normal">Assus</p>
+                                    <h6 class="mb-0 fw-normal">Jalan jalan ke malioboro, cakep</h6>
                                 </td>
                                 <td class="border-bottom-0">
-                                    <p class="mb-0 fw-normal">23 feb 2025</p>
-                                </td>
-                                <td class="border-bottom-0">
-                                    <p class="mb-0 fw-normal">Lihat Struk</p>
-                                </td>
-                                <td class="border-bottom-0">
-                                    <h6 class="mb-0 fw-normal">Alamat</h6>
-                                </td>
-                                <td class="border-bottom-0">
-                                    <h6 class="mb-0 fw-normal">Email</h6>
+                                    <h6 class="mb-0 fw-normal">joshi@gmail.com</h6>
                                 </td>
                                 <td class="border-bottom-0">
                                     <h6 class="mb-0 fw-normal">085783643829</h6>
