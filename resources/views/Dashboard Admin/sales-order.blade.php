@@ -11,7 +11,7 @@
                         <h5 class="card-title fw-semibold mb-4">Sales Order</h5>
                     </div>
                     <div class="col d-flex justify-content-end">
-                        <button type="button" class="btn btn-primary m-1"><i class="ti ti-plus m-1"></i>Tambah Order Sales</button>
+                        <a href="{{ route('dashboard.form-seles-order') }}" class="btn btn-primary m-1"><i class="ti ti-plus m-1"></i>Order</a>
                     </div>
                 </div>
                 <div class="table-responsive">
@@ -19,29 +19,28 @@
                         <thead class="text-dark fs-4">
                             <tr>
                                 <th class="border-bottom-0">Id</th>
-                                <th class="border-bottom-0">Assigned</th>
-                                <th class="border-bottom-0">Name</th>
-                                <th class="border-bottom-0">Priority</th>
-                                <th class="border-bottom-0">Budget</th>
+                                <th class="border-bottom-0">Nama Pembeli</th>
+                                <th class="border-bottom-0">Nama Barang</th>
+                                <th class="border-bottom-0">Struk</th>
+                                <th class="border-bottom-0">Verivikasi</th>
                             </tr>
                         </thead>
                         <tbody>
                             <tr>
                                 <td class="border-bottom-0">1</td>
                                 <td class="border-bottom-0">
-                                    <h6 class="fw-semibold mb-1">Sunil Joshi</h6>
-                                    <span class="fw-normal">Web Designer</span>
+                                    <h6 class="fw-semibold mb-1">Harto</h6>
                                 </td>
                                 <td class="border-bottom-0">
-                                    <p class="mb-0 fw-normal">Elite Admin</p>
+                                    <p class="mb-0 fw-normal">Assus</p>
                                 </td>
                                 <td class="border-bottom-0">
                                     <div class="d-flex align-items-center gap-2">
-                                        <span class="badge bg-primary rounded-3 fw-semibold">Low</span>
+                                        <span class="badge bg-primary rounded-3 fw-semibold">Struk Harto</span>
                                     </div>
                                 </td>
                                 <td class="border-bottom-0">
-                                    <h6 class="fw-semibold mb-0 fs-4">$3.9</h6>
+                                    <h6 class="fw-semibold mb-0 fs-4">Telah Verivikasi</h6>
                                 </td>
                             </tr>
                         </tbody>

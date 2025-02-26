@@ -26,7 +26,7 @@ class DashboardController extends Controller
         return view('Dashboard Admin.form-product');
     }
     public function formPelanggan(){
-        return view('Dashboard Admin.form-pelanggan');
+        return view('Dashboard Admin.form-seles-order');
     }
 
 

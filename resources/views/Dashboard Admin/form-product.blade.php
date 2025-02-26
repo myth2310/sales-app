@@ -22,6 +22,10 @@
             <input type="number" class="form-control" id="productPrice" name="price" placeholder="Masukkan harga produk" required>
           </div>
           <div class="mb-3">
+            <label for="productDiskon" class="form-label">Diskon</label>
+            <input type="text" class="form-control" id="productDiskon" name="Diskon" placeholder="Masukkan Diskon" required>
+          </div>
+          <div class="mb-3">
             <label for="productCategory" class="form-label">Kategori</label>
             <select class="form-select" id="productCategory" name="category_id" required>
               <option value="" selected disabled>Pilih kategori</option>
@@ -30,10 +34,6 @@
               <option value="">Aksesoris</option>
               <option value="">Aksesoris</option>
             </select>
-          </div>
-          <div class="mb-3">
-            <label for="productImage" class="form-label">Gambar Produk</label>
-            <input type="file" class="form-control" id="productImage" name="image">
           </div>
           <button type="submit" class="btn btn-primary">Simpan</button>
         </form>

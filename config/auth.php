@@ -112,4 +112,14 @@ return [
 
     'password_timeout' => env('AUTH_PASSWORD_TIMEOUT', 10800),
 
+
+    'providers' => [
+    'users' => [
+        'driver' => 'eloquent',
+        'model' => App\Models\User::class,
+        'table' => 'users',
+        'column' => 'username', // Ubah dari 'email' ke 'username'
+    ],
+],
+    
 ];

@@ -19,29 +19,34 @@
                         <thead class="text-dark fs-4">
                             <tr>
                                 <th class="border-bottom-0">Id</th>
-                                <th class="border-bottom-0">Assigned</th>
-                                <th class="border-bottom-0">Name</th>
-                                <th class="border-bottom-0">Priority</th>
-                                <th class="border-bottom-0">Budget</th>
+                                <th class="border-bottom-0">Nama Produk</th>
+                                <th class="border-bottom-0">Deskripsi Produk</th>
+                                <th class="border-bottom-0">Harga</th>
+                                <th class="border-bottom-0">Diskon</th>
+                                <th class="border-bottom-0">Kategori</th>
                             </tr>
                         </thead>
                         <tbody>
                             <tr>
                                 <td class="border-bottom-0">1</td>
                                 <td class="border-bottom-0">
-                                    <h6 class="fw-semibold mb-1">Sunil Joshi</h6>
-                                    <span class="fw-normal">Web Designer</span>
+                                    <h6 class="fw-semibold mb-1">Asus</h6>
                                 </td>
-                                <td class="border-bottom-0">
-                                    <p class="mb-0 fw-normal">Elite Admin</p>
+                                <td class="border-bottom-0 word-wrap">
+                                    <p class="mb-0 fw-normal">
+                                        Intel® Celeron® N4020 Processor 1.1 GHz (4M Cache, up to 2.8 GHz)
+                                    </p>
                                 </td>
                                 <td class="border-bottom-0">
                                     <div class="d-flex align-items-center gap-2">
-                                        <span class="badge bg-primary rounded-3 fw-semibold">Low</span>
+                                        <span class="badge bg-primary rounded-3 fw-semibold">12juta</span>
                                     </div>
                                 </td>
                                 <td class="border-bottom-0">
-                                    <h6 class="fw-semibold mb-0 fs-4">$3.9</h6>
+                                    <h6 class="fw-semibold mb-0 fs-4">10%</h6>
+                                </td>
+                                <td class="border-bottom-0">
+                                    <h6 class="fw-semibold mb-0 fs-4">leptop</h6>
                                 </td>
                             </tr>
                         </tbody>

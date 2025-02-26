@@ -10,38 +10,44 @@
                     <div class="col">
                         <h5 class="card-title fw-semibold mb-4">Daftar Pelanggan</h5>
                     </div>
-                    <div class="col d-flex justify-content-end">
-                        <a href="{{ route('dashboard.form-pelanggan') }}" class="btn btn-primary m-1"><i class="ti ti-plus m-1"></i>Tambah Pelanggan</a>
-                    </div>
                 </div>
                 <div class="table-responsive">
                     <table class="table text-nowrap mb-0 align-middle" id="myTable">
                         <thead class="text-dark fs-4">
                             <tr>
                                 <th class="border-bottom-0">Id</th>
-                                <th class="border-bottom-0">Assigned</th>
-                                <th class="border-bottom-0">Name</th>
-                                <th class="border-bottom-0">Priority</th>
-                                <th class="border-bottom-0">Budget</th>
+                                <th class="border-bottom-0">Nama Pelanggan</th>
+                                <th class="border-bottom-0">Barang Pembelian</th>
+                                <th class="border-bottom-0">Tanggal</th>
+                                <th class="border-bottom-0">Struk</th>
+                                <th class="border-bottom-0">Alamat</th>
+                                <th class="border-bottom-0">Email</th>
+                                <th class="border-bottom-0">Nomer Telepon</th>
                             </tr>
                         </thead>
                         <tbody>
                             <tr>
                                 <td class="border-bottom-0">1</td>
                                 <td class="border-bottom-0">
-                                    <h6 class="fw-semibold mb-1">Sunil Joshi</h6>
-                                    <span class="fw-normal">Web Designer</span>
+                                    <h6 class="fw-semibold mb-1">Joshi</h6>
                                 </td>
                                 <td class="border-bottom-0">
-                                    <p class="mb-0 fw-normal">Elite Admin</p>
+                                    <p class="mb-0 fw-normal">Assus</p>
                                 </td>
                                 <td class="border-bottom-0">
-                                    <div class="d-flex align-items-center gap-2">
-                                        <span class="badge bg-primary rounded-3 fw-semibold">Low</span>
-                                    </div>
+                                    <p class="mb-0 fw-normal">23 feb 2025</p>
                                 </td>
                                 <td class="border-bottom-0">
-                                    <h6 class="fw-semibold mb-0 fs-4">$3.9</h6>
+                                    <p class="mb-0 fw-normal">Lihat Struk</p>
+                                </td>
+                                <td class="border-bottom-0">
+                                    <h6 class="mb-0 fw-normal">Alamat</h6>
+                                </td>
+                                <td class="border-bottom-0">
+                                    <h6 class="mb-0 fw-normal">Email</h6>
+                                </td>
+                                <td class="border-bottom-0">
+                                    <h6 class="mb-0 fw-normal">085783643829</h6>
                                 </td>
                             </tr>
                         </tbody>
