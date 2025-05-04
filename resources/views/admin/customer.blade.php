@@ -11,11 +11,10 @@
                         <h5 class="card-title fw-semibold mb-4">Daftar Pelanggan</h5>
                     </div>
                 </div>
-                <div class="table-responsive">
-                    <table class="table text-nowrap mb-0 align-middle" id="myTable">
+                <table class="table table-bordered table-striped datatable" id="orderTable">
                         <thead class="text-dark fs-4">
                             <tr>
-                                <th class="border-bottom-0">Id</th>
+                                <th class="border-bottom-0">No</th>
                                 <th class="border-bottom-0">Nama Pelanggan</th>
                                 <th class="border-bottom-0">Alamat</th>
                                 <th class="border-bottom-0">Email</th>
@@ -23,21 +22,27 @@
                             </tr>
                         </thead>
                         <tbody>
+                        @forelse ($customers as $index => $customer)
                             <tr>
-                                <td class="border-bottom-0">1</td>
+                                <td class="border-bottom-0">{{ $index + 1 }}</td>
                                 <td class="border-bottom-0">
-                                    <h6 class="fw-semibold mb-1">Joshi</h6>
+                                    <h6 class="fw-semibold mb-1 text-dark">{{ $customer->name_pelanggan }}</h6>
                                 </td>
                                 <td class="border-bottom-0">
-                                    <h6 class="mb-0 fw-normal">Jalan jalan ke malioboro, cakep</h6>
+                                    <h6 class="mb-0 fw-normal text-muted">{{ $customer->alamat }}</h6>
                                 </td>
                                 <td class="border-bottom-0">
-                                    <h6 class="mb-0 fw-normal">joshi@gmail.com</h6>
+                                    <h6 class="mb-0 fw-normal text-muted">{{ $customer->email }}</h6>
                                 </td>
                                 <td class="border-bottom-0">
-                                    <h6 class="mb-0 fw-normal">085783643829</h6>
+                                    <h6 class="mb-0 fw-normal text-muted">{{ $customer->no_telpon }}</h6>
                                 </td>
                             </tr>
+                            @empty
+                            <tr>
+                                <td colspan="5" class="text-center">Tidak ada data pelanggan yang tersedia</td>
+                            </tr>
+                            @endforelse
                         </tbody>
                     </table>
                 </div>

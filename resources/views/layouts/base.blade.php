@@ -10,19 +10,43 @@
   <link rel="stylesheet" href="https://cdn.datatables.net/1.13.6/css/jquery.dataTables.min.css">
   <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
   <script src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script>
+  <!-- SweetAlert2 CDN -->
+  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css" integrity="sha512-Evv84Mr4kqVGRNSgIGL/F/aIDqQb7xQ2vcrdIwxfjThSH8CSR7PBEakCr51Ck+w+/U6swU2Im1vVX0SVk9ABhg==" crossorigin="anonymous" referrerpolicy="no-referrer" />
 </head>
 
 <body>
+
+
+<!-- SweetAlert2 Notifications -->
+@if(session('success'))
+    <script>
+        Swal.fire({
+            icon: 'success',
+            title: '{{ session('success')['title'] }}',
+            text: '{{ session('success')['text'] }}',
+        });
+    </script>
+@endif
+
+@if(session('error'))
+    <script>
+        Swal.fire({
+            icon: 'error',
+            title: '{{ session('error')['title'] }}',
+            text: '{{ session('error')['text'] }}',
+        });
+    </script>
+@endif
+
+
+
   <div class="page-wrapper" id="main-wrapper" data-layout="vertical" data-navbarbg="skin6" data-sidebartype="full"
     data-sidebar-position="fixed" data-header-position="fixed">
-    <!-- Sidebar Start -->
     @include('layouts.component.sidebar')
-    <!--  Sidebar End -->
     <div class="body-wrapper">
-      <!--  Header Start -->
       @include('layouts.component.navbar')
-      <!--  Header End -->
       <div class="container-fluid">
         @yield('content')
         @include('layouts.component.footer')
@@ -36,7 +60,6 @@
     });
   </script>
 
-  <!-- <script src="../assets/libs/jquery/dist/jquery.min.js"></script> -->
   <script src="../assets/libs/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
   <script src="../assets/js/sidebarmenu.js"></script>
   <script src="../assets/js/app.min.js"></script>

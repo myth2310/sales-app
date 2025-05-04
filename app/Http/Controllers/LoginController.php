@@ -1,34 +1,47 @@
 <?php
 
 namespace App\Http\Controllers;
+
 use Illuminate\Support\Facades\Auth;
 
 use Illuminate\Http\Request;
 
 class LoginController extends Controller
 {
-    public function showLoginForm(){
+    public function showLoginForm()
+    {
         return view('Login.login');
     }
 
     public function login(Request $request)
     {
         $credentials = $request->validate([
-            'username' => 'required|string',
-            'password' => 'required|string'
+            'email' => 'required|email',
+            'password' => 'required',
         ]);
 
         if (Auth::attempt($credentials)) {
-            return redirect()->route('dashboard')->with('success', 'Login berhasil!');
+            $request->session()->regenerate();
+
+            if (Auth::user()->role === 'admin') {
+                return redirect()->intended('/dashboard');
+            } elseif (Auth::user()->role === 'super admin') {
+                return redirect()->intended('/dashboard');
+            } elseif (Auth::user()->role === 'sales') {
+                return redirect()->intended('dashboard');
+            }
+
+            return redirect()->intended('/');
         }
 
-        return back()->withErrors(['username' => 'Username atau password salah'])->withInput();
+        return back()->withErrors([
+            'email' => 'Email atau password salah.',
+        ])->onlyInput('email');
     }
 
-    public function logout()
+    public function logout(Request $request)
     {
         Auth::logout();
-        return redirect()->route('login')->with('success', 'Anda telah logout.');
+        return redirect('/');
     }
-
 }
