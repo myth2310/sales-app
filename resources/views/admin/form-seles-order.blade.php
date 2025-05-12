@@ -44,23 +44,23 @@
       <div class="card-body row g-3">
         <div class="col-md-6">
           <label class="form-label">Nama Pelanggan</label>
-          <input type="text" name="name_pelanggan" class="form-control" required>
+          <input type="text" name="name_pelanggan" placeholder="Masukan Nama Pelanggan" class="form-control" required>
         </div>
         <div class="col-md-6">
           <label class="form-label">No HP</label>
-          <input type="text" name="no_telepon" class="form-control" required>
+          <input type="text" name="no_telepon" placeholder="Masukan No HP/Telp" class="form-control" required>
         </div>
         <div class="col-md-6">
           <label class="form-label">Alamat</label>
-          <input type="text" name="alamat" class="form-control" required>
+          <input type="text" name="alamat" placeholder="Masukan Alamat Pelanggan" class="form-control" required>
         </div>
         <div class="col-md-6">
           <label class="form-label">Email</label>
-          <input type="email" name="email" class="form-control" required>
+          <input type="email" name="email" class="form-control" placeholder="Masukan Email Pelanggan" required>
         </div>
         <div class="col-md-6">
           <label class="form-label">Nama Sales</label>
-          <input type="text" name="name_sales" class="form-control" required>
+          <input type="text" name="name_sales" placeholder="Masukan Nama Sales" class="form-control" required>
         </div>
       </div>
     </div>
@@ -126,7 +126,9 @@
       $.ajax({
         url: "{{ route('search.product') }}",
         type: "GET",
-        data: { query },
+        data: {
+          query
+        },
         success: function(data) {
           let list = '<ul class="list-group">';
           if (data.length > 0) {

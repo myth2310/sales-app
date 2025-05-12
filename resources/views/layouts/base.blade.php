@@ -19,35 +19,14 @@
 <body>
 
 
-<!-- SweetAlert2 Notifications -->
-@if(session('success'))
-    <script>
-        Swal.fire({
-            icon: 'success',
-            title: '{{ session('success')['title'] }}',
-            text: '{{ session('success')['text'] }}',
-        });
-    </script>
-@endif
-
-@if(session('error'))
-    <script>
-        Swal.fire({
-            icon: 'error',
-            title: '{{ session('error')['title'] }}',
-            text: '{{ session('error')['text'] }}',
-        });
-    </script>
-@endif
-
-
-
   <div class="page-wrapper" id="main-wrapper" data-layout="vertical" data-navbarbg="skin6" data-sidebartype="full"
     data-sidebar-position="fixed" data-header-position="fixed">
     @include('layouts.component.sidebar')
     <div class="body-wrapper">
       @include('layouts.component.navbar')
       <div class="container-fluid">
+        @include('sweetalert::alert')
+
         @yield('content')
         @include('layouts.component.footer')
       </div>

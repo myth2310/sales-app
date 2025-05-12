@@ -15,6 +15,7 @@ return new class extends Migration {
             $table->decimal('price', 10, 2);
             $table->string('garansi');
             $table->integer('discount')->nullable();
+            $table->integer('stok');
             $table->unsignedBigInteger('category_id'); 
             $table->timestamps();
 

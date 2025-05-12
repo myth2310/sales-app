@@ -3,6 +3,18 @@
 @section('content')
 
 <div class="row">
+  @if (isset($outOfStockProducts) && $outOfStockProducts->count() > 0)
+  <div class="alert alert-warning alert-dismissible fade show" role="alert">
+    <strong>Perhatian!</strong> Produk berikut memiliki stok kosong:
+    <ul>
+      @foreach ($outOfStockProducts as $product)
+      <li>- {{ $product->name ?? 'Tidak ditemukan nama produk' }}</li>
+      @endforeach
+    </ul>
+    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+  </div>
+  @endif
+
   <div class="col-lg-6">
     <!-- Total Pelanggan -->
     <div class="card overflow-hidden">
@@ -59,12 +71,7 @@
 <script>
   const ctx = document.getElementById('salesPieChart').getContext('2d');
   const salesData = @json($salesPerProduct);
-
-  const labels = salesData.map(item => {
-    const productName = @json($products)[item.id_product];
-    return productName ? productName : 'Unknown Product';
-  });
-
+  const labels = salesData.map(item => item.product_name);
   const data = salesData.map(item => item.total_sales);
 
   new Chart(ctx, {
@@ -87,13 +94,12 @@
         },
         tooltip: {
           callbacks: {
-            label: function(tooltipItem) {
-              return tooltipItem.raw + ' Penjualan';
+            label: function(context) {
+              return context.label + ': ' + context.raw + ' Penjualan';
             }
           }
         }
-      },
-      aspectRatio: 1,
+      }
     }
   });
 </script>

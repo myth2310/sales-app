@@ -10,12 +10,11 @@ class OrderModel extends Model
     protected $fillable = [
         'id_product',
         'kode_pembayaran',
-        'name_pelanggan',
-        'no_telpon',
-        'alamat',
-        'status',
-        'email',
-        'name_seles',
     ];
     
+
+    public function product()
+    {
+        return $this->belongsTo(Product::class, 'id_product'); 
+    }
 }

@@ -6,29 +6,36 @@ use Illuminate\Http\Request;
 use App\Models\Product;
 use App\Models\Category;
 use App\Models\OrderModel;
+use App\Models\TransaksiModel;
 use Illuminate\Support\Facades\DB;
 
 class DashboardController extends Controller
 {
     public function index()
     {
-        $totalPelanggan = DB::table('orders')->distinct('name_pelanggan')->count('name_pelanggan');
-        $totalOrders = DB::table('orders')->count('id');
+        $totalPelanggan = DB::table('transaksi')->distinct('name_pelanggan')->count('name_pelanggan');
+        $totalOrders = DB::table('transaksi')->count('id');
         $salesPerProduct = DB::table('orders')
-            ->select('id_product', DB::raw('COUNT(*) as total_sales'))
-            ->where('status', 'dibayar')
-            ->groupBy('id_product')
-            ->get();
-
+        ->join('products', 'orders.id_product', '=', 'products.id')
+        ->join('transaksi', 'orders.kode_pembayaran', '=', 'transaksi.kode_pembayaran')
+        ->select('products.name as product_name', DB::raw('COUNT(orders.id) as total_sales'))
+        ->where('transaksi.status', '=', 'dibayar')
+        ->groupBy('products.id', 'products.name')
+        ->orderByDesc('total_sales')
+        ->get();
+    
+        $outOfStockProducts = Product::where('stok', 0)->get();
+     
+    
         $products = DB::table('products')->pluck('name', 'id');
-
-        return view('admin.dashboard', compact('totalPelanggan', 'totalOrders', 'salesPerProduct', 'products'));
+    
+        return view('admin.dashboard', compact('totalPelanggan', 'totalOrders', 'salesPerProduct', 'products','outOfStockProducts'));
     }
-
+    
 
     public function customer()
     {
-        $customers = OrderModel::select('name_pelanggan', 'alamat', 'email', 'no_telpon')
+        $customers = TransaksiModel::select('name_pelanggan', 'alamat', 'email', 'no_telpon')
             ->groupBy('name_pelanggan', 'alamat', 'email', 'no_telpon')
             ->get();
 
@@ -46,8 +53,10 @@ class DashboardController extends Controller
     {
         $products = Product::with('category')->get();
 
-        return view('admin.product', compact('products'));
+        $outOfStockProducts = Product::where('stok', 0)->get();
+        return view('admin.product', compact('products', 'outOfStockProducts'));
     }
+    
 
     public function formProduct()
     {

@@ -27,6 +27,14 @@
                     </div>
 
                     <div class="mb-3">
+                        <label for="stok" class="form-label">Stok Produk</label>
+                        <input type="number" class="form-control" id="stok" name="stok" value="{{ old('stok', $product->stok) }}" required>
+                    </div>
+
+                    
+    
+
+                    <div class="mb-3">
                         <label for="garansi" class="form-label">Garansi</label>
                         <input type="text" class="form-control" id="garansi" name="garansi" value="{{ old('garansi', $product->garansi) }}" required>
                     </div>

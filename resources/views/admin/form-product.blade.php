@@ -32,6 +32,11 @@
           </div>
 
           <div class="mb-3">
+            <label for="productPrice" class="form-label">Stok Barang</label>
+            <input type="number" class="form-control" id="stok" name="stok" value="{{ old('stok') }}" placeholder="Masukan Stok Produk" required>
+          </div>
+
+          <div class="mb-3">
             <label for="productGaransi" class="form-label">Garansi</label>
             <input type="text" class="form-control" name="garansi" value="{{ old('garansi') }}" placeholder="Masukan Garansi" required>
           </div>

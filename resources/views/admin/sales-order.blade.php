@@ -44,10 +44,11 @@
                             <tr>
                                 <th>#</th>
                                 <th>Kode Pembayaran</th>
+                                <th>Tanggal</th>
                                 <th>Nama Pelanggan</th>
                                 <th>No Telepon</th>
                                 <th>Sales</th>
-                                <th>Status</th>
+
                                 <th>Aksi</th>
                             </tr>
                         </thead>
@@ -56,18 +57,11 @@
                             <tr>
                                 <td>{{ $index + 1 }}</td>
                                 <td>{{ $order->kode_pembayaran }}</td>
+                                <td>{{ $order->waktu_pembayaran }}</td>
                                 <td>{{ $order->name_pelanggan }}</td>
                                 <td>{{ $order->no_telpon }}</td>
                                 <td>{{ $order->name_seles }}</td>
-                                <td>
-                                    @if ($order->status == 'pending')
-                                    <span class="badge bg-warning">Belum Bayar</span>
-                                    @elseif ($order->status == 'dibayar')
-                                    <span class="badge bg-success">Pembayaran Berhasil</span>
-                                    @else
-                                    <span class="badge bg-secondary">Status Tidak Diketahui</span>
-                                    @endif
-                                </td>
+
                                 <td>
                                     @if ($order->status == 'pending')
                                     <button class="btn btn-sm btn-warning btn-bayar"
@@ -143,8 +137,34 @@
                     </table>
                 </div>
 
-                <p class="text-end mt-3"><strong>Total Harga : </strong> <span id="modalTotalPrice"></span></p>
+                <p class="text-end mt-3"><strong>Total Harga : </strong> <span id="modalTotalPrice">0</span></p>
+                <div class="row mt-3">
+                    <div class="col-md-6">
+                        <label for="metodePembayaran" class="form-label">Metode Pembayaran</label>
+                        <select class="form-select" id="metodePembayaran" name="metode_pembayaran" required>
+                            <option value="" disabled selected>Pilih metode pembayaran</option>
+                            <option value="tunai">Tunai</option>
+                            <option value="transfer">Transfer Bank</option>
+                            <option value="qris">QRIS</option>
+                            <option value="debit">Kartu Debit</option>
+                            <option value="kredit">Kartu Kredit</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="row mt-4">
+                    <div class="col-md-6">
+                        <label for="uangDibayar" class="form-label">Uang Dibayar</label>
+                        <input type="number" class="form-control" id="uangDibayar" placeholder="Masukkan nominal uang dibayar" required>
+                    </div>
+                    <div class="col-md-6">
+                        <label for="kembalian" class="form-label">Kembalian</label>
+                        <input type="text" class="form-control" id="kembalian" name="kembalian" readonly>
+                    </div>
+                </div>
+
             </div>
+
             <div class="modal-footer justify-content-between">
                 <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Tutup</button>
                 <button type="button" class="btn btn-success" id="btnSimpan">Selesaikan Pembayaran</button>
@@ -175,6 +195,15 @@
                     <div class="col-md-4">
                         <p><strong>Sales : </strong> <span id="modalSalesDetail"></span></p>
                     </div>
+                    <div class="col-md-4">
+                        <p><strong>Status Pembayaran : </strong> <span class="badge text-bg-success" id="modalStatus"></span></p>
+                    </div>
+                    <div class="col-md-4">
+                        <p><strong>Bonus : </strong> <span id="modalBonus"></span></p>
+                    </div>
+                    <div class="col-md-4">
+                        <p><strong>Garansi : </strong> <span id="modalGaransi"></span></p>
+                    </div>
                 </div>
 
                 <div class="table-responsive">
@@ -183,24 +212,101 @@
                             <tr>
                                 <th>Nama Produk</th>
                                 <th>Harga</th>
+                                <th>Bonus</th>
+                                <th>Garansi</th>
                             </tr>
                         </thead>
                         <tbody id="modalProductsDetail"></tbody>
                     </table>
                 </div>
 
+
                 <p class="text-end mt-3"><strong>Total Harga : </strong> <span id="modalTotalPriceDetail"></span></p>
             </div>
+
             <div class="modal-footer justify-content-between">
                 <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Tutup</button>
+                <button type="button" class="btn btn-warning" id="btnPrintInvoice">
+                    <i class="fa-solid fa-print" style="margin-right: 10px;"></i>Print Invoice
+                </button>
             </div>
         </div>
     </div>
 </div>
 
+<div id="printArea" style="display: none;"></div>
+
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+<script>
+    document.getElementById('btnPrintInvoice').addEventListener('click', function() {
+        const kode = document.getElementById('modalKodeDetail').innerText;
+        const name = document.getElementById('modalNameDetail').innerText;
+        const phone = document.getElementById('modalPhoneDetail').innerText;
+        const sales = document.getElementById('modalSalesDetail').innerText;
+        const status = document.getElementById('modalStatus').innerText;
+        const total = document.getElementById('modalTotalPriceDetail').innerText;
+        const productsTable = document.getElementById('modalProductsDetail').innerHTML;
+        const html = `
+        <div style="font-family: Arial; padding: 20px;">
+            <div style="text-align:center;">
+                <h2>INVOICE PEMESANAN</h2>
+                <hr>
+            </div>
+            <p><strong>Kode Pembayaran:</strong> ${kode}</p>
+            <p><strong>Nama Pelanggan:</strong> ${name}</p>
+            <p><strong>No Telepon:</strong> ${phone}</p>
+            <p><strong>Sales:</strong> ${sales}</p>
+            <p><strong>Status Pembayaran:</strong> ${status}</p>
+            <br>
+            <table border="1" cellspacing="0" cellpadding="8" width="100%" style="border-collapse: collapse;">
+                <thead>
+                    <tr>
+                        <th>Nama Produk</th>
+                        <th>Harga</th>
+                        <th>Bonus</th>
+                        <th>Garansi</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    ${productsTable}
+                </tbody>
+            </table>
+            <p style="text-align:right; margin-top:20px;"><strong>Total Harga:</strong> ${total}</p>
+        </div>
+    `;
+
+        const printWindow = window.open('', '', 'width=800,height=600');
+        printWindow.document.write(`<html><head><title>Invoice</title></head><body>${html}</body></html>`);
+        printWindow.document.close();
+        printWindow.focus();
+        printWindow.print();
+        printWindow.close();
+    });
+</script>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const uangDibayarInput = document.getElementById('uangDibayar');
+        const kembalianInput = document.getElementById('kembalian');
+        const totalPriceSpan = document.getElementById('modalTotalPrice');
+
+        uangDibayarInput.addEventListener('input', function() {
+            const totalText = totalPriceSpan.textContent.replace(/[^\d]/g, '');
+            const total = parseInt(totalText) || 0;
+
+            const dibayar = parseInt(this.value) || 0;
+            const kembalian = dibayar - total;
+
+            kembalianInput.value = kembalian >= 0 ?
+                kembalian.toLocaleString('id-ID') :
+                'Kurang';
+        });
+    });
+</script>
+
 
 <script>
     let kodePembayaranGlobal = '';
@@ -209,6 +315,7 @@
         const namePelanggan = $(this).data('name');
         const phone = $(this).data('phone');
         const sales = $(this).data('sales');
+        const status = $(this).data('status');
 
         kodePembayaranGlobal = kodePembayaran;
 
@@ -216,6 +323,7 @@
         $('#modalPhone').text(phone);
         $('#modalSales').text(sales);
         $('#modalKode').text(kodePembayaran);
+        $('#modalStatus').text(status);
 
         $.ajax({
             url: '/orders/' + kodePembayaran,
@@ -260,13 +368,27 @@
             success: function(response) {
                 let productsHtml = '';
                 let totalPrice = 0;
+
                 response.products.forEach(product => {
-                    productsHtml += `<tr><td>${product.product_name}</td><td>Rp. ${parseInt(product.product_price).toLocaleString()}</td></tr>`;
+                    productsHtml += `<tr>
+                                    <td>${product.product_name}</td>
+                                    <td>Rp. ${parseInt(product.product_price).toLocaleString()}</td>
+                                    <td>${product.bonus || 'Tidak ada bonus'}</td>
+                                    <td>${product.garansi || 'Tidak ada garansi'}</td>
+                                  </tr>`;
                     totalPrice += parseInt(product.product_price);
                 });
 
                 $('#modalProductsDetail').html(productsHtml);
                 $('#modalTotalPriceDetail').text('Rp. ' + totalPrice.toLocaleString());
+
+                if (response.products.length > 0) {
+                    $('#modalKodeDetail').text(response.products[0].kode_pembayaran);
+                    $('#modalNameDetail').text(response.products[0].name_pelanggan);
+                    $('#modalPhoneDetail').text(response.products[0].no_telpon);
+                    $('#modalSalesDetail').text(response.products[0].name_sales);
+                    $('#modalStatus').text(response.products[0].status);
+                }
 
                 const modal = new bootstrap.Modal(document.getElementById('orderDetailModal'));
                 modal.show();
@@ -279,6 +401,35 @@
 
 
     $('#btnSimpan').on('click', function() {
+        const metodePembayaran = $('#metodePembayaran').val();
+        const uangDibayarStr = $('#uangDibayar').val();
+        const uangDibayar = parseInt(uangDibayarStr);
+        const totalText = $('#modalTotalPrice').text().replace(/[^\d]/g, '');
+        const totalHarga = parseInt(totalText) || 0;
+        const kembalian = uangDibayar - totalHarga;
+
+        console.log("Uang Dibayar:", uangDibayar);
+        console.log("Total Harga:", totalHarga);
+        console.log("Kembalian:", kembalian);
+
+
+        // Validasi
+        if (!metodePembayaran) {
+            Swal.fire('Peringatan', 'Silakan pilih metode pembayaran terlebih dahulu.', 'warning');
+            return;
+        }
+
+        if (uangDibayarStr.trim() === '' || isNaN(uangDibayar)) {
+            Swal.fire('Peringatan', 'Masukkan jumlah uang yang dibayar.', 'warning');
+            return;
+        }
+
+        if (kembalian < 0) {
+            Swal.fire('Peringatan', 'Uang dibayar kurang dari total harga.', 'warning');
+            return;
+        }
+
+        // Konfirmasi
         Swal.fire({
             title: 'Yakin ingin menyelesaikan pembayaran?',
             text: "Tindakan ini akan mengubah status semua transaksi terkait menjadi 'Dibayar'. Pastikan data sudah benar sebelum melanjutkan.",
@@ -295,7 +446,10 @@
                     type: 'POST',
                     data: {
                         _token: '{{ csrf_token() }}',
-                        kode_pembayaran: kodePembayaranGlobal
+                        kode_pembayaran: kodePembayaranGlobal,
+                        metode_pembayaran: metodePembayaran,
+                        uang_bayar: uangDibayarStr,
+                        kembali: kembalian
                     },
                     success: function(response) {
                         Swal.fire({
@@ -316,9 +470,11 @@
                         });
                     }
                 });
+
             }
         });
     });
+
 
     $(document).on('click', '.btn-delete', function() {
         const kodePembayaran = $(this).data('kode');

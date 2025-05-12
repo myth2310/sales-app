@@ -18,6 +18,19 @@
                     </div>
                 </div>
 
+                @if (isset($outOfStockProducts) && $outOfStockProducts->count() > 0)
+                <div class="alert alert-warning alert-dismissible fade show" role="alert">
+                    <strong>Perhatian!</strong> Produk berikut memiliki stok kosong:
+                    <ul>
+                        @foreach ($outOfStockProducts as $product)
+                        <li>- {{ $product->name ?? 'Tidak ditemukan nama produk' }}</li>
+                        @endforeach
+                    </ul>
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                </div>
+                @endif
+
+
                 <div class="table-responsive">
                     <table class="table table-bordered table-striped datatable" id="orderTable">
                         <thead class="text-dark fs-4">
@@ -26,6 +39,7 @@
                                 <th>Kategori</th>
                                 <th>Deskripsi</th>
                                 <th>Harga</th>
+                                <th>Stok</th>
                                 <th>Garansi</th>
                                 <th>Diskon</th>
                                 <th>Bonus</th>
@@ -41,6 +55,7 @@
                                 <td>{{ $product->category->name ?? 'Tidak ada kategori' }}</td>
                                 <td style="white-space: normal; max-width: 300px;">{{ $product->description }}</td>
                                 <td>Rp {{ number_format($product->price, 0, ',', '.') }}</td>
+                                <td>{{ $product->stok }}</td>
                                 <td>{{ $product->garansi }}</td>
                                 <td>{{ $product->discount }}%</td>
                                 <td>{{ $product->bonus }}</td>

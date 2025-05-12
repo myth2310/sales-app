@@ -5,7 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Models\Product;
 use App\Models\Category;
-
+use RealRashid\SweetAlert\Facades\Alert;
 
 class ProductController extends Controller
 {
@@ -13,8 +13,10 @@ class ProductController extends Controller
     {
         $products = Product::all();
         $categories = Category::all();
+    
         return view('admin.form-product', compact('products', 'categories'));
     }
+    
 
     public function store(Request $request)
     {
@@ -25,12 +27,15 @@ class ProductController extends Controller
             'price' => 'required|numeric',
             'garansi' => 'required',
             'discount' => 'nullable|numeric',
+            'stok' => 'numeric',
             'category_id' => 'required|exists:categories,id',
         ]);
 
         Product::create($request->all());
 
-        return redirect()->route('dashboard.product')->with('success', 'Produk berhasil ditambahkan!');
+        Alert::success('Berhasil', 'Produk berhasil ditambahkan!');
+
+        return redirect()->route('dashboard.product');
     }
 
     public function edit($id)
@@ -49,19 +54,22 @@ class ProductController extends Controller
             'price' => 'required|numeric',
             'garansi' => 'required',
             'discount' => 'nullable|numeric',
+            'stok' => 'numeric',
             'category_id' => 'required|exists:categories,id',
         ]);
         $product = Product::findOrFail($id);
         $product->update($request->all());
-        return redirect()->route('dashboard.product')->with('success', 'Produk berhasil diperbarui!');
+        Alert::success('Berhasil', 'Produk berhasil diperbarui!');
+        return redirect()->route('dashboard.product');
     }
 
     public function destroy($id)
     {
         $product = Product::findOrFail($id);
         $product->delete();
+        Alert::success('Berhasil', 'Produk berhasil dihapus!');
 
-        return redirect()->route('dashboard.product')->with('success', 'Produk berhasil dihapus!');
+        return redirect()->route('dashboard.product');
     }
 
 
@@ -82,6 +90,7 @@ class ProductController extends Controller
                 'bonus' => $product->bonus,
                 'garansi' => $product->garansi,
                 'price' => $product->price,
+                'stok' => $product->stok,
                 'discount' => $product->discount
             ]);
         }
@@ -92,9 +101,13 @@ class ProductController extends Controller
 
     public function search(Request $request)
     {
-        $data = Product::where('name', 'LIKE', '%' . $request->q . '%')->get();
+        $data = Product::where('name', 'LIKE', '%' . $request->q . '%')
+            ->where('stok', '>', 0)
+            ->get();
+
         return response()->json($data);
     }
+
 
     public function show($id)
     {

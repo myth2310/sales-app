@@ -15,14 +15,9 @@ return new class extends Migration
             $table->id();
             $table->unsignedBigInteger('id_product'); 
             $table->string('kode_pembayaran');  
-            $table->string('name_pelanggan');
-            $table->string('no_telpon');
-            $table->string('alamat');
-            $table->string('email');
-            $table->enum('status', ['pending', 'dibayar'])->default('pending');
-            $table->string('name_seles');
             $table->timestamps();
             $table->foreign('id_product')->references('id')->on('products')->onDelete('cascade');
+            
         });
         
     }
