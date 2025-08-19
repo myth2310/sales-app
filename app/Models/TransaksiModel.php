@@ -10,7 +10,7 @@ class TransaksiModel extends Model
 {
     use HasFactory;
 
-    protected $table = 'transaksi'; 
+    protected $table = 'transaksi';
 
     protected $fillable = [
         'kode_pembayaran',
@@ -27,4 +27,5 @@ class TransaksiModel extends Model
         'waktu_pembayaran',
     ];
 
+   
 }

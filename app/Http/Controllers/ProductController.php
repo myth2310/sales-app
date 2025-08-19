@@ -13,10 +13,10 @@ class ProductController extends Controller
     {
         $products = Product::all();
         $categories = Category::all();
-    
+
         return view('admin.form-product', compact('products', 'categories'));
     }
-    
+
 
     public function store(Request $request)
     {
@@ -27,16 +27,31 @@ class ProductController extends Controller
             'price' => 'required|numeric',
             'garansi' => 'required',
             'discount' => 'nullable|numeric',
-            'stok' => 'numeric',
+            'stok' => 'nullable|numeric',
+            'stok_preorder' => 'nullable|numeric',
             'category_id' => 'required|exists:categories,id',
+            'is_preorder' => 'required|boolean',
+            'available_date' => 'nullable|date',
         ]);
 
-        Product::create($request->all());
+        $data = $request->all();
+
+        if ($request->is_preorder) {
+            $data['preorder_quantity'] = 0;
+            $data['stok'] = 0;
+            $data['stok_preorder'] = 0;
+            $data['preorder_quantity'] = 0;
+            $data['available_date'] = null;
+        }
+
+        $product = Product::create($data);
+
+
 
         Alert::success('Berhasil', 'Produk berhasil ditambahkan!');
-
         return redirect()->route('dashboard.product');
     }
+
 
     public function edit($id)
     {
@@ -102,10 +117,68 @@ class ProductController extends Controller
     public function search(Request $request)
     {
         $data = Product::where('name', 'LIKE', '%' . $request->q . '%')
-            ->where('stok', '>', 0)
+            ->where(function ($query) {
+                $query->where(function ($q) {
+                    $q->where('stok', '>', 0)
+                        ->whereColumn('stok', '!=', 'preorder_quantity');
+                })
+                    ->orWhere(function ($q) {
+                        $q->where('is_preorder', 1)
+                            ->where('stok_preorder', '>', 0)
+                            ->whereColumn('stok_preorder', '!=', 'preorder_quantity');
+                    });
+            })
             ->get();
 
         return response()->json($data);
+    }
+
+    public function updateStock(Request $request, $id)
+    {
+        $request->validate([
+            'is_preorder' => 'required|boolean',
+            'stok' => 'nullable|integer|min:0',
+            'stok_preorder' => 'nullable|integer|min:0',
+            'available_date' => 'nullable|date'
+        ]);
+
+        $product = Product::findOrFail($id);
+
+        if ($request->is_preorder) {
+            $product->is_preorder = 1;
+            $product->stok = 0;
+            $product->stok_preorder = $request->stok_preorder ?? 0;
+            $product->available_date = $request->available_date;
+        } else {
+            $product->is_preorder = 0;
+            $product->stok = $request->stok ?? 0;
+            $product->stok_preorder = 0;
+            $product->available_date = null;
+        }
+
+        $product->save();
+
+        return redirect()->back()->with('success', 'Stok dan status produk berhasil diperbarui.');
+    }
+
+
+
+    public function syncPreorder($id)
+    {
+        $product = Product::findOrFail($id);
+
+        if ($product->is_preorder && $product->stok_preorder > 0) {
+
+            $product->stok += $product->stok_preorder;
+            $product->stok_preorder = 0;
+            $product->is_preorder = 0;
+            $product->available_date = null;
+            $product->save();
+
+            return redirect()->back()->with('success', 'Stok Pre-Order berhasil dipindahkan ke stok fisik.');
+        }
+
+        return redirect()->back()->with('error', 'Produk ini tidak dalam status preorder atau stok_preorder kosong.');
     }
 
 

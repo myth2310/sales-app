@@ -15,7 +15,11 @@ return new class extends Migration {
             $table->decimal('price', 10, 2);
             $table->string('garansi');
             $table->integer('discount')->nullable();
-            $table->integer('stok');
+            $table->boolean('is_preorder')->default(false); 
+            $table->integer('preorder_quantity')->default(0);
+            $table->date('available_date')->nullable(); 
+            $table->integer('stok')->default(0);
+            $table->integer('stok_preorder')->default(0);
             $table->unsignedBigInteger('category_id'); 
             $table->timestamps();
 
@@ -23,9 +27,7 @@ return new class extends Migration {
             // $table->foreign('category_id')->references('id')->on('categories')->onDelete('cascade');
         });
     }
-    /**
-     * Reverse the migrations.
-     */
+
     public function down(): void
     {
         Schema::dropIfExists('products');

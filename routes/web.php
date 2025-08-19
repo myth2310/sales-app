@@ -30,6 +30,9 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/product/{id}', [ProductController::class, 'edit'])->name('product.edit');
     Route::put('/product/{id}', [ProductController::class, 'update'])->name('product.update');
     Route::delete('/product/{id}', [ProductController::class, 'destroy'])->name('product.destroy');
+    Route::put('/products/{id}/update-stock', [ProductController::class, 'updateStock'])->name('product.updateStock');
+    Route::put('/products/{id}/sync-stock', [ProductController::class, 'syncPreorder'])->name('product.syncPreorder');
+
 
 
     // Sales Order Routes
@@ -40,5 +43,6 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/orders/{kodePembayaran}', [OrderController::class, 'getOrderDetail'])->name('order.detail');
     Route::post('/status-update', [OrderController::class, 'updateStatus'])->name('sales-order.updateStatus');
     Route::delete('/orders/delete/{kode_pembayaran}', [OrderController::class, 'destroy'])->name('orders.destroy');
-
+    Route::post('/orders/approve-pickup', [OrderController::class, 'approvePickup'])->name('orders.approvePickup');
+    Route::post('/orders/download', [OrderController::class, 'downloadLaporan']);
 });

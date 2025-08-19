@@ -75,7 +75,7 @@
   const data = salesData.map(item => item.total_sales);
 
   new Chart(ctx, {
-    type: 'pie',
+    type: 'bar',
     data: {
       labels: labels,
       datasets: [{

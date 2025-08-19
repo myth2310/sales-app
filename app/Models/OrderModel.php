@@ -10,6 +10,8 @@ class OrderModel extends Model
     protected $fillable = [
         'id_product',
         'kode_pembayaran',
+        'preorder_status',
+        'quantity',
     ];
     
 

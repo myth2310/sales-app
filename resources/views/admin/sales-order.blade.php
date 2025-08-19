@@ -2,254 +2,359 @@
 
 @section('content')
 <div class="row">
-    <div class="col-lg d-flex align-items-stretch">
-        <div class="card w-100">
-            <div class="card-body p-4">
-                <div class="row mb-4">
-                    <div class="col">
-                        <h5 class="card-title fw-semibold mb-4">Sales Order</h5>
-                    </div>
-                    <div class="col d-flex justify-content-end">
-                        @if(Auth::user()->role == 'super admin')
-                        <a href="{{ route('dashboard.form-seles-order') }}" class="btn btn-primary m-1">
-                            <i class="ti ti-plus m-1"></i>Tambah Pembelian
-                        </a>
-                        @endif
+    <div class="row mb-4">
+        <div class="row">
+            <!-- Penghasilan Hari Ini -->
+            <div class="col-md-4">
+                <div class="card text-white bg-primary shadow-sm">
+                    <div class="card-body">
+                        <h6 class="fw-semibold">Penghasilan Hari Ini</h6>
+                        <h4 class="fw-bold">Rp. {{ number_format($pendapatanHariIni, 0, ',', '.') }}</h4>
                     </div>
                 </div>
-                <form action="{{ route('sales-order.filter') }}" method="POST" class="mb-4">
-                    @csrf
-                    <div class="row">
+            </div>
+
+            <!-- Penghasilan Bulan Ini -->
+            <div class="col-md-4">
+                <div class="card text-white bg-success shadow-sm">
+                    <div class="card-body">
+                        <h6 class="fw-semibold">Penghasilan Bulan Ini</h6>
+                        <h4 class="fw-bold">Rp. {{ number_format($pendapatanBulanIni, 0, ',', '.') }}</h4>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Penghasilan Tahun Ini -->
+            <div class="col-md-4">
+                <div class="card text-white bg-warning shadow-sm">
+                    <div class="card-body">
+                        <h6 class="fw-semibold">Penghasilan Tahun Ini</h6>
+                        <h4 class="fw-bold">Rp. {{ number_format($pendapatanTahunIni, 0, ',', '.') }}</h4>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+
+        <div class="col-lg d-flex align-items-stretch">
+            <div class="card w-100">
+                <div class="card-body p-4">
+                    <div class="row mb-4">
                         <div class="col">
-                            <label for="start_date">Tanggal Mulai</label>
-                            <input type="date" name="start_date" class="form-control" value="{{ request('start_date') }}">
+                            <h5 class="card-title fw-semibold mb-4">Sales Order</h5>
                         </div>
-                        <div class="col">
-                            <label for="end_date">Tanggal Akhir (Opsional)</label>
-                            <input type="date" name="end_date" class="form-control" value="{{ request('end_date') }}">
-                        </div>
-                        <div class="col d-flex align-items-end">
-                            <button type="submit" class="btn btn-primary">Filter</button>
+                        <div class="col d-flex justify-content-end">
+                            @if(Auth::user()->role == 'super admin')
+                            <a href="{{ route('dashboard.form-seles-order') }}" class="btn btn-primary m-1">
+                                <i class="ti ti-plus m-1"></i>Tambah Pembelian
+                            </a>
+                            @endif
                         </div>
                     </div>
-                </form>
+                    <form action="{{ route('sales-order.filter') }}" method="POST" class="mb-4">
+                        @csrf
+                        <div class="row">
+                            <div class="col">
+                                <label for="start_date">Tanggal Mulai</label>
+                                <input type="date" name="start_date" class="form-control"
+                                    value="{{ request('start_date') }}">
+                            </div>
+                            <div class="col">
+                                <label for="end_date">Tanggal Akhir (Opsional)</label>
+                                <input type="date" name="end_date" class="form-control" value="{{ request('end_date') }}">
+                            </div>
+                            <div class="col d-flex align-items-end">
+                                <button type="submit" class="btn btn-primary">Filter</button>
+                            </div>
+                        </div>
+                    </form>
 
-                <div class="alert alert-info">
-                    <strong>Tanggal Hari Ini </strong>: {{ \Carbon\Carbon::today()->translatedFormat('l, d F Y') }}
-                </div>
+                    <hr>
+                    <form id="filterForm" action="/orders/download" method="post" class="mb-3">
+                        @csrf
 
-                <div class="table-responsive">
-                    <table class="table table-bordered table-striped datatable" id="orderTable">
-                        <thead class="text-dark fs-4">
-                            <tr>
-                                <th>#</th>
-                                <th>Kode Pembayaran</th>
-                                <th>Tanggal</th>
-                                <th>Nama Pelanggan</th>
-                                <th>No Telepon</th>
-                                <th>Sales</th>
+                        <div class="row">
+                            <div class="col-md-4">
+                                <label for="item">Pilih Item</label>
+                                <select name="item" id="item" class="form-control" required>
+                                    <option value="">-- Semua Item --</option>
+                                    <?php foreach ($items as $row): ?>
+                                        <option value="<?= $row['id'] ?>"><?= $row['name'] ?> </option>
+                                    <?php endforeach; ?>
+                                </select>
+                            </div>
+                            <div class="col-md-3">
+                                <label for="start_date">Dari Tanggal</label>
+                                <input type="date" name="start_date" id="start_date" class="form-control" required>
+                            </div>
+                            <div class="col-md-3">
+                                <label for="end_date">Sampai Tanggal</label>
+                                <input type="date" name="end_date" id="end_date" class="form-control" required>
+                            </div>
+                            <div class="col-md-2 d-flex align-items-end">
+                                <button type="submit" class="btn btn-success w-100">
+                                    Download Excel
+                                </button>
+                            </div>
+                        </div>
+                    </form>
 
-                                <th>Aksi</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            @forelse ($orders as $index => $order)
-                            <tr>
-                                <td>{{ $index + 1 }}</td>
-                                <td>{{ $order->kode_pembayaran }}</td>
-                                <td>{{ $order->waktu_pembayaran }}</td>
-                                <td>{{ $order->name_pelanggan }}</td>
-                                <td>{{ $order->no_telpon }}</td>
-                                <td>{{ $order->name_seles }}</td>
 
-                                <td>
-                                    @if ($order->status == 'pending')
-                                    <button class="btn btn-sm btn-warning btn-bayar"
-                                        data-kode="{{ $order->kode_pembayaran }}"
-                                        data-name="{{ $order->name_pelanggan }}"
-                                        data-phone="{{ $order->no_telpon }}"
-                                        data-sales="{{ $order->name_seles }}">
-                                        <i class="fa-solid fa-money-bill"></i>
-                                    </button>
-                                    @elseif ($order->status == 'dibayar')
-                                    <button class="btn btn-sm btn-info btn-detail"
-                                        data-kode="{{ $order->kode_pembayaran }}"
-                                        data-name="{{ $order->name_pelanggan }}"
-                                        data-phone="{{ $order->no_telpon }}"
-                                        data-sales="{{ $order->name_seles }}">
-                                        <i class="fa-solid fa-receipt"></i>
-                                    </button>
-                                    @endif
-                                    <button class="btn btn-sm btn-danger btn-delete" data-kode="{{ $order->kode_pembayaran }}">
-                                        <i class="fa-solid fa-trash"></i>
-                                    </button>
+                    <div class="alert alert-info">
+                        <strong>Tanggal Hari Ini </strong>: {{ \Carbon\Carbon::today()->translatedFormat('l, d F Y') }}
+                    </div>
 
-                                </td>
-                            </tr>
-                            @empty
-                            <tr>
-                                <td colspan="7" class="text-center text-muted">Tidak ada data ditemukan.</td>
-                            </tr>
-                            @endforelse
-                        </tbody>
-                    </table>
+                    <div class="table-responsive">
+                        <table class="table table-bordered table-striped datatable" id="orderTable">
+                            <thead class="text-dark fs-4">
+                                <tr>
+                                    <th>#</th>
+                                    <th>Kode Pembayaran</th>
+                                    <th>Tanggal</th>
+                                    <th>Nama Pelanggan</th>
+                                    <th>No Telepon</th>
+                                    <th>Sales</th>
+                                    <th>Status</th>
+                                    <th>Keterangan</th>
+                                    <th>Aksi</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @forelse ($orders as $index => $order)
+                                <tr>
+                                    <td>{{ $index + 1 }}</td>
+                                    <td>{{ $order->kode_pembayaran }}</td>
+                                    <td>{{ $order->created_at }}</td>
+                                    <td>{{ $order->name_pelanggan }}</td>
+                                    <td>{{ $order->no_telpon }}</td>
+                                    <td>{{ $order->name_seles }}</td>
+                                    <td>
+                                        @if($order->status == 'dibayar')
+                                        <span class="badge bg-success">Sudah Dibayar</span>
+                                        @else
+                                        <span class="badge bg-warning">Belum Dibayar</span>
+                                        @endif
+                                    </td>
+                                    <td>
+                                        @if($order->preorder_pending_count > 0)
+                                        <span class="badge bg-warning">
+                                            Ada {{ $order->preorder_pending_count }} Barang Pre Order Belum Diambil
+                                        </span>
+                                        @else
+                                        -
+                                        @endif
+                                    </td>
+
+                                    <td>
+                                        @if ($order->status == 'pending')
+                                        <button class="btn btn-sm btn-warning btn-bayar"
+                                            data-kode="{{ $order->kode_pembayaran }}"
+                                            data-name="{{ $order->name_pelanggan }}" data-phone="{{ $order->no_telpon }}"
+                                            data-sales="{{ $order->name_seles }}">
+                                            <i class="fa-solid fa-money-bill"></i>
+                                        </button>
+                                        @elseif ($order->status == 'dibayar')
+                                        <button class="btn btn-sm btn-info btn-detail"
+                                            data-kode="{{ $order->kode_pembayaran }}"
+                                            data-name="{{ $order->name_pelanggan }}" data-phone="{{ $order->no_telpon }}"
+                                            data-sales="{{ $order->name_seles }}">
+                                            <i class="fa-solid fa-receipt"></i>
+                                        </button>
+                                        @endif
+                                        <button class="btn btn-sm btn-danger btn-delete"
+                                            data-kode="{{ $order->kode_pembayaran }}">
+                                            <i class="fa-solid fa-trash"></i>
+                                        </button>
+
+                                    </td>
+                                </tr>
+                                @empty
+                                <tr>
+                                    <td colspan="9" class="text-center text-muted">Tidak ada data ditemukan.</td>
+                                </tr>
+                                @endforelse
+                            </tbody>
+                        </table>
+                    </div>
                 </div>
             </div>
         </div>
     </div>
-</div>
 
-<!-- Modal for Payment -->
-<div class="modal fade" id="orderModal" tabindex="-1" aria-labelledby="orderModalLabel" aria-hidden="true">
-    <div class="modal-dialog modal-xl modal-dialog-centered">
-        <div class="modal-content">
-            <div class="modal-header bg-primary text-white">
-                <h5 class="modal-title text-white">Detail Pesanan</h5>
-                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Tutup"></button>
-            </div>
-            <div class="modal-body">
-                <input type="hidden" id="kodePembayaranInput">
+    <!-- Modal for Payment -->
+    <div class="modal fade" id="orderModal" tabindex="-1" aria-labelledby="orderModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-xl modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header bg-primary text-white">
+                    <h5 class="modal-title text-white">Detail Pesanan</h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"
+                        aria-label="Tutup"></button>
+                </div>
+                <div class="modal-body">
+                    <input type="hidden" id="kodePembayaranInput">
 
-                <div class="row mb-3">
-                    <div class="col-md-4">
-                        <p><strong>Kode Pembayaran : </strong> <span id="modalKode"></span></p>
+                    <div class="row mb-3">
+                        <div class="col-md-4">
+                            <p><strong>Kode Pembayaran : </strong> <span id="modalKode"></span></p>
+                        </div>
+                        <div class="col-md-4">
+                            <p><strong>Nama Pelanggan : </strong> <span id="modalName"></span></p>
+                        </div>
+                        <div class="col-md-4">
+                            <p><strong>No Telepon : </strong> <span id="modalPhone"></span></p>
+                        </div>
+                        <div class="col-md-4">
+                            <p><strong>Sales : </strong> <span id="modalSales"></span></p>
+                        </div>
                     </div>
-                    <div class="col-md-4">
-                        <p><strong>Nama Pelanggan : </strong> <span id="modalName"></span></p>
+
+                    <div class="table-responsive">
+                        <table class="table table-bordered table-striped">
+                            <thead class="table-light">
+                                <tr>
+                                    <th>Nama Produk</th>
+                                    <th>Harga</th>
+                                    <th>Jumlah</th>
+                                    <th>Bonus</th>
+                                    <th>Garansi</th>
+                                    <th>Sub Total</th>
+                                </tr>
+                            </thead>
+                            <tbody id="modalProducts"></tbody>
+                        </table>
                     </div>
-                    <div class="col-md-4">
-                        <p><strong>No Telepon : </strong> <span id="modalPhone"></span></p>
+
+                    <p class="text-end mt-3"><strong>Total Harga : </strong> <span id="modalTotalPrice">0</span></p>
+                    <div class="row mt-3">
+                        <div class="col-md-6">
+                            <label for="metodePembayaran" class="form-label">Metode Pembayaran</label>
+                            <select class="form-select" id="metodePembayaran" name="metode_pembayaran" required>
+                                <option value="" disabled selected>Pilih metode pembayaran</option>
+                                <option value="tunai">Tunai</option>
+                                <option value="transfer">Transfer Bank</option>
+                                <option value="qris">QRIS</option>
+                                <option value="debit">Kartu Debit</option>
+                                <option value="kredit">Kartu Kredit</option>
+                            </select>
+                        </div>
                     </div>
-                    <div class="col-md-4">
-                        <p><strong>Sales : </strong> <span id="modalSales"></span></p>
+
+                    <div class="row mt-4">
+                        <div class="col-md-6">
+                            <label for="uangDibayar" class="form-label">Uang Dibayar</label>
+                            <input type="number" class="form-control" id="uangDibayar"
+                                placeholder="Masukkan nominal uang dibayar" required>
+                        </div>
+                        <div class="col-md-6">
+                            <label for="kembalian" class="form-label">Kembalian</label>
+                            <input type="text" class="form-control" id="kembalian" name="kembalian" readonly>
+                        </div>
                     </div>
+
                 </div>
 
-                <div class="table-responsive">
-                    <table class="table table-bordered table-striped">
-                        <thead class="table-light">
-                            <tr>
-                                <th>Nama Produk</th>
-                                <th>Harga</th>
-                            </tr>
-                        </thead>
-                        <tbody id="modalProducts"></tbody>
-                    </table>
+                <div class="modal-footer justify-content-between">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Tutup</button>
+                    <button type="button" class="btn btn-success" id="btnSimpan">Selesaikan Pembayaran</button>
                 </div>
-
-                <p class="text-end mt-3"><strong>Total Harga : </strong> <span id="modalTotalPrice">0</span></p>
-                <div class="row mt-3">
-                    <div class="col-md-6">
-                        <label for="metodePembayaran" class="form-label">Metode Pembayaran</label>
-                        <select class="form-select" id="metodePembayaran" name="metode_pembayaran" required>
-                            <option value="" disabled selected>Pilih metode pembayaran</option>
-                            <option value="tunai">Tunai</option>
-                            <option value="transfer">Transfer Bank</option>
-                            <option value="qris">QRIS</option>
-                            <option value="debit">Kartu Debit</option>
-                            <option value="kredit">Kartu Kredit</option>
-                        </select>
-                    </div>
-                </div>
-
-                <div class="row mt-4">
-                    <div class="col-md-6">
-                        <label for="uangDibayar" class="form-label">Uang Dibayar</label>
-                        <input type="number" class="form-control" id="uangDibayar" placeholder="Masukkan nominal uang dibayar" required>
-                    </div>
-                    <div class="col-md-6">
-                        <label for="kembalian" class="form-label">Kembalian</label>
-                        <input type="text" class="form-control" id="kembalian" name="kembalian" readonly>
-                    </div>
-                </div>
-
-            </div>
-
-            <div class="modal-footer justify-content-between">
-                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Tutup</button>
-                <button type="button" class="btn btn-success" id="btnSimpan">Selesaikan Pembayaran</button>
-            </div>
-        </div>
-    </div>
-</div>
-
-<!-- Modal for Order Details -->
-<div class="modal fade" id="orderDetailModal" tabindex="-1" aria-labelledby="orderModalLabel" aria-hidden="true">
-    <div class="modal-dialog modal-xl modal-dialog-centered">
-        <div class="modal-content">
-            <div class="modal-header bg-primary text-white">
-                <h5 class="modal-title text-white">Detail Pesanan</h5>
-                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Tutup"></button>
-            </div>
-            <div class="modal-body">
-                <div class="row mb-3">
-                    <div class="col-md-4">
-                        <p><strong>Kode Pembayaran : </strong> <span id="modalKodeDetail"></span></p>
-                    </div>
-                    <div class="col-md-4">
-                        <p><strong>Nama Pelanggan : </strong> <span id="modalNameDetail"></span></p>
-                    </div>
-                    <div class="col-md-4">
-                        <p><strong>No Telepon : </strong> <span id="modalPhoneDetail"></span></p>
-                    </div>
-                    <div class="col-md-4">
-                        <p><strong>Sales : </strong> <span id="modalSalesDetail"></span></p>
-                    </div>
-                    <div class="col-md-4">
-                        <p><strong>Status Pembayaran : </strong> <span class="badge text-bg-success" id="modalStatus"></span></p>
-                    </div>
-                    <div class="col-md-4">
-                        <p><strong>Bonus : </strong> <span id="modalBonus"></span></p>
-                    </div>
-                    <div class="col-md-4">
-                        <p><strong>Garansi : </strong> <span id="modalGaransi"></span></p>
-                    </div>
-                </div>
-
-                <div class="table-responsive">
-                    <table class="table table-bordered table-striped">
-                        <thead class="table-light">
-                            <tr>
-                                <th>Nama Produk</th>
-                                <th>Harga</th>
-                                <th>Bonus</th>
-                                <th>Garansi</th>
-                            </tr>
-                        </thead>
-                        <tbody id="modalProductsDetail"></tbody>
-                    </table>
-                </div>
-
-
-                <p class="text-end mt-3"><strong>Total Harga : </strong> <span id="modalTotalPriceDetail"></span></p>
-            </div>
-
-            <div class="modal-footer justify-content-between">
-                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Tutup</button>
-                <button type="button" class="btn btn-warning" id="btnPrintInvoice">
-                    <i class="fa-solid fa-print" style="margin-right: 10px;"></i>Print Invoice
-                </button>
             </div>
         </div>
     </div>
-</div>
 
-<div id="printArea" style="display: none;"></div>
+    <!-- Modal for Order Details -->
+    <div class="modal fade" id="orderDetailModal" tabindex="-1" aria-labelledby="orderModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-xl modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header bg-primary text-white">
+                    <h5 class="modal-title text-white">Detail Pesanan</h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"
+                        aria-label="Tutup"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="row mb-3">
+                        <div class="col-md-4">
+                            <p><strong>Kode Pembayaran : </strong> <span id="modalKodeDetail"></span></p>
+                        </div>
+                        <div class="col-md-4">
+                            <p><strong>Nama Pelanggan : </strong> <span id="modalNameDetail"></span></p>
+                        </div>
+                        <div class="col-md-4">
+                            <p><strong>No Telepon : </strong> <span id="modalPhoneDetail"></span></p>
+                        </div>
+                        <div class="col-md-4">
+                            <p><strong>Sales : </strong> <span id="modalSalesDetail"></span></p>
+                        </div>
+                        <div class="col-md-4">
+                            <p><strong>Status Pembayaran : </strong> <span class="badge text-bg-success"
+                                    id="modalStatus"></span></p>
+                        </div>
+                    </div>
 
-<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+                    <div class="table-responsive">
+                        <table class="table table-bordered table-striped">
+                            <thead class="table-light">
+                                <tr>
+                                    <th>Nama Produk</th>
+                                    <th>Harga</th>
+                                    <th>Jumlah</th>
+                                    <th>Bonus</th>
+                                    <th>Garansi</th>
+                                    <th>Sub Total</th>
+                                    <th>Aksi</th>
+                                </tr>
+                            </thead>
+                            <tbody id="modalProductsDetail"></tbody>
+                        </table>
+                    </div>
 
-<script>
-    document.getElementById('btnPrintInvoice').addEventListener('click', function() {
-        const kode = document.getElementById('modalKodeDetail').innerText;
-        const name = document.getElementById('modalNameDetail').innerText;
-        const phone = document.getElementById('modalPhoneDetail').innerText;
-        const sales = document.getElementById('modalSalesDetail').innerText;
-        const status = document.getElementById('modalStatus').innerText;
-        const total = document.getElementById('modalTotalPriceDetail').innerText;
-        const productsTable = document.getElementById('modalProductsDetail').innerHTML;
-        const html = `
+
+                    <p class="text-end mt-3"><strong>Total Harga : </strong> <span id="modalTotalPriceDetail"></span></p>
+                    <p class="text-end mt-3"><strong>Dibayar : </strong> <span id="modalUangBayar"></span></p>
+                    <p class="text-end mt-3"><strong>Kembalian : </strong> <span id="modalKembalian"></span></p>
+
+                </div>
+
+                <div class="modal-footer justify-content-between">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Tutup</button>
+                    <button type="button" class="btn btn-warning" id="btnPrintInvoice">
+                        <i class="fa-solid fa-print" style="margin-right: 10px;"></i>Print Invoice
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="printArea" style="display: none;"></div>
+
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+    <script>
+        document.getElementById('btnPrintInvoice').addEventListener('click', function() {
+            const kode = document.getElementById('modalKodeDetail').innerText;
+            const name = document.getElementById('modalNameDetail').innerText;
+            const phone = document.getElementById('modalPhoneDetail').innerText;
+            const sales = document.getElementById('modalSalesDetail').innerText;
+            const status = document.getElementById('modalStatus').innerText;
+            const total = document.getElementById('modalTotalPriceDetail').innerText;
+            const dibayar = document.getElementById('modalUangBayar').innerText;
+            const kembalian = document.getElementById('modalKembalian').innerText;
+
+            const productsTable = Array.from(document.querySelectorAll('#modalProductsDetail tr')).map(tr => {
+                const tds = tr.querySelectorAll('td');
+                return `<tr>
+            <td>${tds[0].innerHTML}</td> 
+            <td>${tds[1].innerHTML}</td> 
+            <td>${tds[2].innerHTML}</td> 
+            <td>${tds[3].innerHTML}</td> 
+            <td>${tds[4].innerHTML}</td> 
+            <td>${tds[5].innerHTML}</td>
+            <td>${tds[6].querySelector('span') ? tds[6].querySelector('span').outerHTML : '-'}</td>
+        </tr>`;
+            }).join('');
+
+            const html = `
         <div style="font-family: Arial; padding: 20px;">
             <div style="text-align:center;">
                 <h2>INVOICE PEMESANAN</h2>
@@ -266,257 +371,348 @@
                     <tr>
                         <th>Nama Produk</th>
                         <th>Harga</th>
+                        <th>Jumlah</th>
                         <th>Bonus</th>
                         <th>Garansi</th>
+                        <th>Sub Total</th>
+                        <th>Status Pre Order</th>
                     </tr>
                 </thead>
                 <tbody>
                     ${productsTable}
                 </tbody>
             </table>
-            <p style="text-align:right; margin-top:20px;"><strong>Total Harga:</strong> ${total}</p>
+            <p style="text-align:right; margin-top:20px;"><strong>Total Harga :</strong> ${total}</p>
+            <p style="text-align:right; margin-top:20px;"><strong>Dibayar :</strong> ${dibayar}</p>
+            <p style="text-align:right; margin-top:20px;"><strong>Kembalian :</strong> ${kembalian}</p>
         </div>
     `;
 
-        const printWindow = window.open('', '', 'width=800,height=600');
-        printWindow.document.write(`<html><head><title>Invoice</title></head><body>${html}</body></html>`);
-        printWindow.document.close();
-        printWindow.focus();
-        printWindow.print();
-        printWindow.close();
-    });
-</script>
-
-<script>
-    document.addEventListener('DOMContentLoaded', function() {
-        const uangDibayarInput = document.getElementById('uangDibayar');
-        const kembalianInput = document.getElementById('kembalian');
-        const totalPriceSpan = document.getElementById('modalTotalPrice');
-
-        uangDibayarInput.addEventListener('input', function() {
-            const totalText = totalPriceSpan.textContent.replace(/[^\d]/g, '');
-            const total = parseInt(totalText) || 0;
-
-            const dibayar = parseInt(this.value) || 0;
-            const kembalian = dibayar - total;
-
-            kembalianInput.value = kembalian >= 0 ?
-                kembalian.toLocaleString('id-ID') :
-                'Kurang';
+            const printWindow = window.open('', '', 'width=800,height=600');
+            printWindow.document.write(`<html><head><title>Invoice</title></head><body>${html}</body></html>`);
+            printWindow.document.close();
+            printWindow.focus();
+            printWindow.print();
+            printWindow.close();
         });
-    });
-</script>
+    </script>
 
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const uangDibayarInput = document.getElementById('uangDibayar');
+            const kembalianInput = document.getElementById('kembalian');
+            const totalPriceSpan = document.getElementById('modalTotalPrice');
 
-<script>
-    let kodePembayaranGlobal = '';
-    $(document).on('click', '.btn-bayar', function() {
-        const kodePembayaran = $(this).data('kode');
-        const namePelanggan = $(this).data('name');
-        const phone = $(this).data('phone');
-        const sales = $(this).data('sales');
-        const status = $(this).data('status');
+            uangDibayarInput.addEventListener('input', function() {
+                const totalText = totalPriceSpan.textContent.replace(/[^\d]/g, '');
+                const total = parseInt(totalText) || 0;
 
-        kodePembayaranGlobal = kodePembayaran;
+                const dibayar = parseInt(this.value) || 0;
+                const kembalian = dibayar - total;
 
-        $('#modalName').text(namePelanggan);
-        $('#modalPhone').text(phone);
-        $('#modalSales').text(sales);
-        $('#modalKode').text(kodePembayaran);
-        $('#modalStatus').text(status);
-
-        $.ajax({
-            url: '/orders/' + kodePembayaran,
-            type: 'GET',
-            success: function(response) {
-                let productsHtml = '';
-                let totalPrice = 0;
-
-                response.products.forEach(product => {
-                    productsHtml += `<tr><td>${product.product_name}</td><td>Rp. ${parseInt(product.product_price).toLocaleString()}</td></tr>`;
-                    totalPrice += parseInt(product.product_price);
-                });
-
-                $('#modalProducts').html(productsHtml);
-                $('#modalTotalPrice').text('Rp. ' + totalPrice.toLocaleString());
-
-                const modal = new bootstrap.Modal(document.getElementById('orderModal'));
-                modal.show();
-            },
-            error: function() {
-                alert('Gagal mengambil data produk.');
-            }
+                kembalianInput.value = kembalian >= 0 ?
+                    kembalian.toLocaleString('id-ID') :
+                    'Kurang';
+            });
         });
-    });
+    </script>
 
-    $(document).on('click', '.btn-detail', function() {
-        const kodePembayaran = $(this).data('kode');
-        const namePelanggan = $(this).data('name');
-        const phone = $(this).data('phone');
-        const sales = $(this).data('sales');
 
-        $('#btnSimpan').hide();
+    <script>
+        let kodePembayaranGlobal = '';
+        $(document).on('click', '.btn-bayar', function() {
+            const kodePembayaran = $(this).data('kode');
+            const namePelanggan = $(this).data('name');
+            const phone = $(this).data('phone');
+            const sales = $(this).data('sales');
+            const status = $(this).data('status');
+            const bonus = $(this).data('bonus');
 
-        $('#modalNameDetail').text(namePelanggan);
-        $('#modalPhoneDetail').text(phone);
-        $('#modalSalesDetail').text(sales);
-        $('#modalKodeDetail').text(kodePembayaran);
+            kodePembayaranGlobal = kodePembayaran;
 
-        $.ajax({
-            url: '/orders/' + kodePembayaran,
-            type: 'GET',
-            success: function(response) {
-                let productsHtml = '';
-                let totalPrice = 0;
+            $('#modalName').text(namePelanggan);
+            $('#modalPhone').text(phone);
+            $('#modalSales').text(sales);
+            $('#modalKode').text(kodePembayaran);
+            $('#modalBonus').text(bonus);
 
-                response.products.forEach(product => {
-                    productsHtml += `<tr>
-                                    <td>${product.product_name}</td>
-                                    <td>Rp. ${parseInt(product.product_price).toLocaleString()}</td>
-                                    <td>${product.bonus || 'Tidak ada bonus'}</td>
-                                    <td>${product.garansi || 'Tidak ada garansi'}</td>
-                                  </tr>`;
-                    totalPrice += parseInt(product.product_price);
-                });
+            $.ajax({
+                url: '/orders/' + kodePembayaran,
+                type: 'GET',
+                success: function(response) {
+                    let totalPrice = 0;
+                    let productsHtml = "";
 
-                $('#modalProductsDetail').html(productsHtml);
-                $('#modalTotalPriceDetail').text('Rp. ' + totalPrice.toLocaleString());
+                    response.products.forEach(product => {
+                        const price = parseInt(product.product_price) || 0;
+                        const qty = parseInt(product.quantity) || 0;
+                        const subtotal = price * qty;
 
-                if (response.products.length > 0) {
-                    $('#modalKodeDetail').text(response.products[0].kode_pembayaran);
-                    $('#modalNameDetail').text(response.products[0].name_pelanggan);
-                    $('#modalPhoneDetail').text(response.products[0].no_telpon);
-                    $('#modalSalesDetail').text(response.products[0].name_sales);
-                    $('#modalStatus').text(response.products[0].status);
+                        const namaProduk = product.is_preorder ?
+                            `${product.product_name} <span style="color: red; font-weight: bold;">(Pre Order - ${product.available_date})</span>` :
+                            product.product_name;
+
+                        productsHtml += `<tr>
+                <td>${namaProduk}</td>
+                    <td>Rp. ${price.toLocaleString()}</td>
+                    <td>${qty}</td>
+                    <td>${product.bonus || 'Tidak ada bonus'}</td>
+                    <td>${product.garansi || 'Tidak ada garansi'}</td>
+                    <td>Rp. ${subtotal.toLocaleString()}</td>
+                </tr>`;
+
+                        totalPrice += subtotal;
+                    });
+
+                    $('#modalProducts').html(productsHtml);
+                    $('#modalTotalPrice').text('Rp. ' + totalPrice.toLocaleString());
+
+                    const modal = new bootstrap.Modal(document.getElementById('orderModal'));
+                    modal.show();
+                },
+                error: function() {
+                    alert('Gagal mengambil data produk.');
                 }
-
-                const modal = new bootstrap.Modal(document.getElementById('orderDetailModal'));
-                modal.show();
-            },
-            error: function() {
-                alert('Gagal mengambil data produk.');
-            }
+            });
         });
-    });
 
+        $(document).on('click', '.btn-detail', function() {
+            const kodePembayaran = $(this).data('kode');
+            const namePelanggan = $(this).data('name');
+            const phone = $(this).data('phone');
+            const sales = $(this).data('sales');
 
-    $('#btnSimpan').on('click', function() {
-        const metodePembayaran = $('#metodePembayaran').val();
-        const uangDibayarStr = $('#uangDibayar').val();
-        const uangDibayar = parseInt(uangDibayarStr);
-        const totalText = $('#modalTotalPrice').text().replace(/[^\d]/g, '');
-        const totalHarga = parseInt(totalText) || 0;
-        const kembalian = uangDibayar - totalHarga;
+            $('#btnSimpan').hide();
 
-        console.log("Uang Dibayar:", uangDibayar);
-        console.log("Total Harga:", totalHarga);
-        console.log("Kembalian:", kembalian);
+            $('#modalNameDetail').text(namePelanggan);
+            $('#modalPhoneDetail').text(phone);
+            $('#modalSalesDetail').text(sales);
+            $('#modalKodeDetail').text(kodePembayaran);
 
+            $.ajax({
+                url: '/orders/' + kodePembayaran,
+                type: 'GET',
+                success: function(response) {
+                    let totalPrice = 0;
+                    let productsHtml = "";
 
-        // Validasi
-        if (!metodePembayaran) {
-            Swal.fire('Peringatan', 'Silakan pilih metode pembayaran terlebih dahulu.', 'warning');
-            return;
-        }
+                    response.products.forEach(product => {
+                        console.log(product)
+                        const price = parseInt(product.product_price) || 0;
+                        const qty = parseInt(product.quantity) || 0;
+                        const subtotal = price * qty;
 
-        if (uangDibayarStr.trim() === '' || isNaN(uangDibayar)) {
-            Swal.fire('Peringatan', 'Masukkan jumlah uang yang dibayar.', 'warning');
-            return;
-        }
+                        const namaProduk = product.is_preorder ?
+                            `${product.product_name} <span style="color: red; font-weight: bold;">(Pre Order)</span>` :
+                            product.product_name;
 
-        if (kembalian < 0) {
-            Swal.fire('Peringatan', 'Uang dibayar kurang dari total harga.', 'warning');
-            return;
-        }
+                        let approveButton = '';
 
-        // Konfirmasi
-        Swal.fire({
-            title: 'Yakin ingin menyelesaikan pembayaran?',
-            text: "Tindakan ini akan mengubah status semua transaksi terkait menjadi 'Dibayar'. Pastikan data sudah benar sebelum melanjutkan.",
-            icon: 'warning',
-            showCancelButton: true,
-            confirmButtonColor: '#3085d6',
-            cancelButtonColor: '#d33',
-            confirmButtonText: 'Ya, Bayar!',
-            cancelButtonText: 'Batal'
-        }).then((result) => {
-            if (result.isConfirmed) {
-                $.ajax({
-                    url: '{{ route("sales-order.updateStatus") }}',
-                    type: 'POST',
-                    data: {
-                        _token: '{{ csrf_token() }}',
-                        kode_pembayaran: kodePembayaranGlobal,
-                        metode_pembayaran: metodePembayaran,
-                        uang_bayar: uangDibayarStr,
-                        kembali: kembalian
-                    },
-                    success: function(response) {
-                        Swal.fire({
-                            title: 'Berhasil!',
-                            text: response.message,
-                            icon: 'success',
-                            confirmButtonText: 'OK'
-                        }).then(() => {
-                            $('#btnSimpan').hide();
-                            location.reload();
-                        });
-                    },
-                    error: function(xhr) {
-                        Swal.fire({
-                            title: 'Gagal!',
-                            text: xhr.responseJSON.message || 'Terjadi kesalahan saat memperbarui status.',
-                            icon: 'error'
-                        });
+                        if (product.is_preorder == 0 && product.preorder_status === 'picked_up') {
+                            approveButton = `<span class="badge bg-success">Sudah Diambil</span>`;
+                        } else if (product.is_preorder == 0 && product.stok != 0) {
+                            approveButton = `<button class="btn btn-sm btn-success btn-approve-pickup" data-id="${product.id}">
+        <i class="fa-solid fa-check"></i> Approve Pickup
+    </button>`;
+                        } else {
+                            approveButton = `<button class="btn btn-sm btn-warning btn-approve-pickup" data-id="${product.id}" disabled style="cursor: not-allowed;">
+        <i class="fa-solid fa-check"></i> Approve Pickup 
+    </button>`;
+                        }
+                        productsHtml += `<tr>
+                    <td>${namaProduk}</td>
+                    <td>Rp. ${price.toLocaleString()}</td>
+                    <td>${qty}</td>
+                    <td>${product.bonus || 'Tidak ada bonus'}</td>
+                    <td>${product.garansi || 'Tidak ada garansi'}</td>
+                    <td>Rp. ${subtotal.toLocaleString()}</td>
+                    <td>${approveButton}</td>
+                 </tr>`;
+
+                        totalPrice += subtotal;
+                    });
+
+                    $('#modalProductsDetail').html(productsHtml);
+                    $('#modalTotalPriceDetail').text('Rp. ' + totalPrice.toLocaleString());
+
+                    if (response.products.length > 0) {
+                        $('#modalKodeDetail').text(response.products[0].kode_pembayaran);
+                        $('#modalNameDetail').text(response.products[0].name_pelanggan);
+                        $('#modalPhoneDetail').text(response.products[0].no_telpon);
+                        $('#modalSalesDetail').text(response.products[0].name_sales);
+                        $('#modalStatus').text(response.products[0].status);
+                        $('#modalBonus').text(response.products[0].bonus || 'Tidak ada bonus');
+                        $('#modalGaransi').text(response.products[0].garansi || 'Tidak ada garansi');
                     }
-                });
 
-            }
+                    $('#modalUangBayar').text('Rp. ' + (response.uang_bayar || 0).toLocaleString());
+                    $('#modalKembalian').text('Rp. ' + (response.kembalian || 0).toLocaleString());
+
+                    const modal = new bootstrap.Modal(document.getElementById('orderDetailModal'));
+                    modal.show();
+                },
+                error: function() {
+                    alert('Gagal mengambil data produk.');
+                }
+            });
         });
-    });
 
 
-    $(document).on('click', '.btn-delete', function() {
-        const kodePembayaran = $(this).data('kode');
+        $('#btnSimpan').on('click', function() {
+            const metodePembayaran = $('#metodePembayaran').val();
+            const uangDibayarStr = $('#uangDibayar').val();
+            const uangDibayar = parseInt(uangDibayarStr);
+            const totalText = $('#modalTotalPrice').text().replace(/[^\d]/g, '');
+            const totalHarga = parseInt(totalText) || 0;
+            const kembalian = uangDibayar - totalHarga;
 
-        Swal.fire({
-            title: 'Apakah Anda yakin?',
-            text: "Data pesanan ini akan dihapus dan tidak dapat dikembalikan.",
-            icon: 'warning',
-            showCancelButton: true,
-            confirmButtonColor: '#d33',
-            cancelButtonColor: '#3085d6',
-            confirmButtonText: 'Ya, Hapus!',
-            cancelButtonText: 'Batal'
-        }).then((result) => {
-            if (result.isConfirmed) {
-                $.ajax({
-                    url: '/orders/delete/' + kodePembayaran,
-                    type: 'DELETE',
-                    data: {
-                        _token: '{{ csrf_token() }}',
-                    },
-                    success: function(response) {
-                        Swal.fire({
-                            title: 'Terhapus!',
-                            text: response.message,
-                            icon: 'success',
-                            confirmButtonText: 'OK'
-                        }).then(() => {
-                            location.reload();
-                        });
-                    },
-                    error: function(xhr) {
-                        Swal.fire({
-                            title: 'Gagal!',
-                            text: xhr.responseJSON.message || 'Terjadi kesalahan saat menghapus data.',
-                            icon: 'error'
-                        });
-                    }
-                });
+            console.log("Uang Dibayar:", uangDibayar);
+            console.log("Total Harga:", totalHarga);
+            console.log("Kembalian:", kembalian);
+
+            if (!metodePembayaran) {
+                Swal.fire('Peringatan', 'Silakan pilih metode pembayaran terlebih dahulu.', 'warning');
+                return;
             }
-        });
-    });
-</script>
 
-@endsection
+            if (uangDibayarStr.trim() === '' || isNaN(uangDibayar)) {
+                Swal.fire('Peringatan', 'Masukkan jumlah uang yang dibayar.', 'warning');
+                return;
+            }
+
+            if (kembalian < 0) {
+                Swal.fire('Peringatan', 'Uang dibayar kurang dari total harga.', 'warning');
+                return;
+            }
+
+            Swal.fire({
+                title: 'Yakin ingin menyelesaikan pembayaran?',
+                text: "Tindakan ini akan mengubah status semua transaksi terkait menjadi 'Dibayar'. Pastikan data sudah benar sebelum melanjutkan.",
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#3085d6',
+                cancelButtonColor: '#d33',
+                confirmButtonText: 'Ya, Bayar!',
+                cancelButtonText: 'Batal'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    $.ajax({
+                        url: '{{ route("sales-order.updateStatus") }}',
+                        type: 'POST',
+                        data: {
+                            _token: '{{ csrf_token() }}',
+                            kode_pembayaran: kodePembayaranGlobal,
+                            metode_pembayaran: metodePembayaran,
+                            uang_bayar: uangDibayarStr,
+                            kembali: kembalian
+                        },
+                        success: function(response) {
+                            Swal.fire({
+                                title: 'Berhasil!',
+                                text: response.message,
+                                icon: 'success',
+                                confirmButtonText: 'OK'
+                            }).then(() => {
+                                $('#btnSimpan').hide();
+                                location.reload();
+                            });
+                        },
+                        error: function(xhr) {
+                            Swal.fire({
+                                title: 'Gagal!',
+                                text: xhr.responseJSON.message || 'Terjadi kesalahan saat memperbarui status.',
+                                icon: 'error'
+                            });
+                        }
+                    });
+
+                }
+            });
+        });
+
+
+        $(document).on('click', '.btn-delete', function() {
+            const kodePembayaran = $(this).data('kode');
+
+            Swal.fire({
+                title: 'Apakah Anda yakin?',
+                text: "Data pesanan ini akan dihapus dan tidak dapat dikembalikan.",
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#d33',
+                cancelButtonColor: '#3085d6',
+                confirmButtonText: 'Ya, Hapus!',
+                cancelButtonText: 'Batal'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    $.ajax({
+                        url: '/orders/delete/' + kodePembayaran,
+                        type: 'DELETE',
+                        data: {
+                            _token: '{{ csrf_token() }}',
+                        },
+                        success: function(response) {
+                            Swal.fire({
+                                title: 'Terhapus!',
+                                text: response.message,
+                                icon: 'success',
+                                confirmButtonText: 'OK'
+                            }).then(() => {
+                                location.reload();
+                            });
+                        },
+                        error: function(xhr) {
+                            Swal.fire({
+                                title: 'Gagal!',
+                                text: xhr.responseJSON.message || 'Terjadi kesalahan saat menghapus data.',
+                                icon: 'error'
+                            });
+                        }
+                    });
+                }
+            });
+        });
+
+
+        $(document).on('click', '.btn-approve-pickup', function() {
+            const orderId = $(this).data('id');
+
+            Swal.fire({
+                title: 'Konfirmasi',
+                text: "Apakah Anda yakin ingin approve pickup ini?",
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonText: 'Ya, approve',
+                cancelButtonText: 'Batal'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    $.ajax({
+                        url: '/orders/approve-pickup',
+                        type: 'POST',
+                        data: {
+                            order_id: orderId,
+                        },
+                        headers: {
+                            'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                        },
+                        success: function(response) {
+                            if (response.success) {
+                                Swal.fire('Berhasil!', response.message, 'success').then(() => {
+                                    location.reload();
+                                });
+                            } else {
+                                Swal.fire('Gagal', response.message, 'error');
+                            }
+                        },
+                        error: function(xhr) {
+                            Swal.fire('Gagal', xhr.responseJSON?.message || 'Terjadi kesalahan', 'error');
+                        }
+                    });
+                }
+            });
+        });
+    </script>
+
+
+
+    @endsection

@@ -14,7 +14,9 @@ return new class extends Migration
         Schema::create('orders', function (Blueprint $table) {
             $table->id();
             $table->unsignedBigInteger('id_product'); 
-            $table->string('kode_pembayaran');  
+            $table->string('kode_pembayaran'); 
+            $table->enum('preorder_status', ['pending', 'picked_up'])->default('pending'); 
+            $table->integer('quantity');  
             $table->timestamps();
             $table->foreign('id_product')->references('id')->on('products')->onDelete('cascade');
             
@@ -22,9 +24,6 @@ return new class extends Migration
         
     }
 
-    /**
-     * Reverse the migrations.
-     */
     public function down(): void
     {
         Schema::dropIfExists('orders');
