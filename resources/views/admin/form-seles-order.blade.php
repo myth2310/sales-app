@@ -33,6 +33,8 @@
         <div class="col-md-1">
           <input type="number" name="barang[0][jumlah]" class="form-control jumlah-field" placeholder="Jumlah" min="1" value="1">
           <input type="hidden" class="stok-field" name="barang[0][stok]" value="0">
+          <input type="hidden" class="is-preorder-field" name="barang[0][is_preorder]" value="0">
+          <input type="hidden" class="stok-preorder-field" name="barang[0][stok_preorder]" value="0">
         </div>
         <div class="col-md-1 d-flex align-items-center">
           <button type="button" class="btn btn-outline-danger btn-sm remove-item">X</button>
@@ -114,6 +116,8 @@
         <div class="col-md-1">
           <input type="number" name="barang[${index}][jumlah]" class="form-control jumlah-field" placeholder="Jumlah" min="1" value="1">
           <input type="hidden" class="stok-field" name="barang[${index}][stok]" value="0">
+          <input type="hidden" class="is-preorder-field" name="barang[${index}][is_preorder]" value="0">
+          <input type="hidden" class="stok-preorder-field" name="barang[${index}][stok)preorder]" value="0">
         </div>
         <div class="col-md-1 d-flex align-items-center">
           <button type="button" class="btn btn-outline-danger btn-sm remove-item">X</button>
@@ -152,7 +156,9 @@
                 data-garansi="${product.garansi}" 
                 data-diskon="${product.discount}" 
                 data-stok="${product.stok}" 
-                style="cursor:pointer;">${product.name} (Stok: ${product.stok})</li>`;
+                data-is-preorder="${product.is_preorder}" 
+                data-stok-preorder="${product.stok_preorder}" 
+                style="cursor:pointer;">${product.name} (Stok: ${product.stok} | Stok Pre Order : ${product.stok_preorder})</li>`;
             });
           } else {
             list += '<li class="list-group-item">Produk tidak ditemukan</li>';
@@ -177,6 +183,8 @@
     parent.find('.garansi-field').val(li.data('garansi'));
     parent.find('input[name$="[bonus]"]').val(li.data('bonus'));
     parent.find('.stok-field').val(li.data('stok'));
+    parent.find('.is-preorder-field').val(li.data('is-preorder'));
+    parent.find('.stok-preorder-field').val(li.data('stok-preorder'));
 
     parent.find('.jumlah-field').val(1);
 
@@ -187,7 +195,12 @@
 
   $(document).on('keyup change', '.jumlah-field', function() {
     const parent = $(this).closest('.barang-item');
-    const stok = parseInt(parent.find('.stok-field').val()) || 0;
+
+    const isPreorder = parseInt(parent.find('.is-preorder-field').val()) || 0;
+    const stokNormal = parseInt(parent.find('.stok-field').val()) || 0;
+    const stokPreorder = parseInt(parent.find('.stok-preorder-field').val()) || 0;
+    const stok = (isPreorder === 1) ? stokPreorder : stokNormal;
+
     let jumlah = parseInt($(this).val()) || 1;
 
     if (stok > 0 && jumlah > stok) {
@@ -201,12 +214,14 @@
       jumlah = stok;
       $(this).val(jumlah);
     }
+
     if (jumlah < 1) {
       $(this).val(1);
     }
 
     updateTotalHarga();
   });
+
 
   $(document).on('click', function(e) {
     if (!$(e.target).closest('.name-barang, .suggestion-box').length) {

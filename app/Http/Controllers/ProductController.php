@@ -17,7 +17,6 @@ class ProductController extends Controller
         return view('admin.form-product', compact('products', 'categories'));
     }
 
-
     public function store(Request $request)
     {
         $request->validate([
@@ -33,24 +32,25 @@ class ProductController extends Controller
             'is_preorder' => 'required|boolean',
             'available_date' => 'nullable|date',
         ]);
-
+    
         $data = $request->all();
-
-        if ($request->is_preorder) {
-            $data['preorder_quantity'] = 0;
+    
+        $data['stok'] = $data['stok'] ?? 0;
+        $data['stok_preorder'] = $data['stok_preorder'] ?? 0;
+    
+        if ($request->is_preorder == 1) {
             $data['stok'] = 0;
-            $data['stok_preorder'] = 0;
+            $data['stok_preorder'] = $data['stok_preorder'];
             $data['preorder_quantity'] = 0;
-            $data['available_date'] = null;
+            $data['available_date'] =  $data['available_date'];
         }
-
+    
         $product = Product::create($data);
-
-
-
+    
         Alert::success('Berhasil', 'Produk berhasil ditambahkan!');
         return redirect()->route('dashboard.product');
     }
+    
 
 
     public function edit($id)

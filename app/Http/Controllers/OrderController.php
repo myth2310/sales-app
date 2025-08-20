@@ -39,7 +39,8 @@ class OrderController extends Controller
                 't.waktu_pembayaran',
                 't.created_at',
                 't.updated_at',
-                DB::raw('SUM(CASE WHEN p.is_preorder = 1 AND o.preorder_status = "pending" THEN 1 ELSE 0 END) as preorder_pending_count')
+                DB::raw('SUM(CASE WHEN (p.is_preorder = 1 OR p.is_preorder = 0) AND o.preorder_status = "pending" THEN 1 ELSE 0 END) as preorder_pending_count')
+
             )
             ->whereDate('t.created_at', Carbon::today())
             ->groupBy(
@@ -332,7 +333,6 @@ class OrderController extends Controller
         return response()->json(['message' => 'Pesanan dengan kode pembayaran ini tidak ditemukan.'], 404);
     }
 
-
     public function approvePickup(Request $request)
     {
         try {
@@ -344,18 +344,20 @@ class OrderController extends Controller
                     'message' => 'Order tidak ditemukan'
                 ]);
             }
-
-            $items = DB::table('orders')->where('id', $request->order_id)->get();
+            $items = DB::table('orders')
+                ->where('id', $request->order_id)
+                ->get();
 
             foreach ($items as $item) {
                 DB::table('products')
-                    ->where('id', $item->id)
+                    ->where('id', $item->id_product)
                     ->decrement('stok', $item->quantity);
 
                 DB::table('products')
-                    ->where('id', $item->id)
+                    ->where('id', $item->id_product)
                     ->decrement('preorder_quantity', $item->quantity);
             }
+
             DB::table('orders')
                 ->where('id', $request->order_id)
                 ->update([
@@ -365,7 +367,7 @@ class OrderController extends Controller
 
             return response()->json([
                 'success' => true,
-                'message' => 'Pickup berhasil disetujui dan stok berhasil dikurangi'
+                'message' => 'Pickup berhasil disetujui, stok & preorder_quantity dikurangi'
             ]);
         } catch (\Exception $e) {
             return response()->json([
@@ -374,6 +376,8 @@ class OrderController extends Controller
             ]);
         }
     }
+
+
 
     public function downloadLaporan(Request $request)
     {
@@ -441,8 +445,6 @@ class OrderController extends Controller
 
         $writer = new \PhpOffice\PhpSpreadsheet\Writer\Xlsx($spreadsheet);
         $filename = 'Laporan_Transaksi_' . date('YmdHis') . '.xlsx';
-
-        // Output download
         header('Content-Type: application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
         header("Content-Disposition: attachment; filename=\"$filename\"");
         header('Cache-Control: max-age=0');
